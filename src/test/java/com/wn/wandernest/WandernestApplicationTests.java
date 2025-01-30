@@ -8,6 +8,7 @@ class WandernestApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// Test logic here
 	}
 
 }
