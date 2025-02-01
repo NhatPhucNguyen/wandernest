@@ -1,5 +1,7 @@
 package com.wn.wandernest.controllers;
 
+import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -7,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,6 +30,7 @@ import lombok.Setter;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
@@ -110,6 +114,15 @@ public class AuthController {
     // Login endpoint
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        // Check if user exists
+        Optional<User> user = userService.findByUsername(loginRequest.getUsername());
+        if (user.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ApiResponseDTO(Status.ERROR, "User not found!", null));
+        }
+        // Check if password is correct
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
+            return ResponseEntity.badRequest().body(new ApiResponseDTO(Status.ERROR, "Invalid password!", null));
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -121,6 +134,7 @@ public class AuthController {
         String jwt = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new LoginResponse(jwt));
     }
+
     // Logout endpoint
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
@@ -132,6 +146,7 @@ public class AuthController {
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok(new ApiResponseDTO(Status.SUCCESS, "User logged out successfully!", null));
     }
+
     // DTO Classes
     @Getter
     @Setter
