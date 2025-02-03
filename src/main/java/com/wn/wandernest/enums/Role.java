@@ -1,4 +1,4 @@
-package com.wn.wandernest.models;
+package com.wn.wandernest.enums;
 
 public enum Role {
     ROLE_USER,

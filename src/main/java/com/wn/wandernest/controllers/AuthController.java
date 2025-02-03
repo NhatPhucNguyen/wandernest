@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wn.wandernest.dtos.ApiResponseDTO;
 import com.wn.wandernest.dtos.ApiResponseDTO.Status;
-import com.wn.wandernest.models.Role;
+import com.wn.wandernest.enums.Role;
 import com.wn.wandernest.models.User;
 import com.wn.wandernest.security.TokenBlacklist;
 import com.wn.wandernest.services.UserService;
