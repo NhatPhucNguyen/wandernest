@@ -8,6 +8,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +106,8 @@ public class AuthControllerTest {
         AuthController.LoginRequest loginRequest = new AuthController.LoginRequest();
         loginRequest.setUsername("testuser");
         loginRequest.setPassword("ValidPassword1!");
-
+        when(userService.findByUsername(any())).thenReturn(Optional.of(new User()));
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
         // Perform the request and verify the response
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)

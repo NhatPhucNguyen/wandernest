@@ -6,6 +6,8 @@ import java.util.Arrays;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +23,12 @@ import com.wn.wandernest.services.ItineraryService;
 @CrossOrigin
 @RequestMapping("/api/itineraries")
 public class ItineraryController {
+
+    @PostMapping("/generate")
+    public ResponseEntity<Itinerary> generateItinerary(@RequestBody ItineraryRequestDTO requestDTO) {
+        Itinerary itinerary = itineraryService.generateItinerary(requestDTO);
+        return ResponseEntity.ok(itinerary);
+    }
     public ItineraryService itineraryService;
 
     public ItineraryController(ItineraryService itineraryService) {

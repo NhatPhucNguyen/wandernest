@@ -12,8 +12,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
+import lombok.Setter;
 
 @Component
+@Getter
+@Setter
 public class JwtTokenUtil {
     @Value("${jwt.secret}")
     private String secret;
@@ -49,7 +53,7 @@ public class JwtTokenUtil {
         return extractAllClaims(token).getSubject();
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 }
