@@ -24,12 +24,11 @@ public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String name;
-    private String cuisine;
-    private double priceRange;
+    private int priceLevel;
     private LocalDate date;
-    
+
     @ManyToOne
     @JoinColumn(name = "itinerary_id")
     private Itinerary itinerary;

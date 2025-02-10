@@ -31,7 +31,7 @@ public class Accommodation {
     
     private String name;
     private String address;
-    private double pricePerNight;
+    private double priceLevel;
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     

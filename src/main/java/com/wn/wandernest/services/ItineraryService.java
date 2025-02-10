@@ -31,18 +31,18 @@ public class ItineraryService {
 
         // 2. Fetch accommodations from API
         List<Accommodation> accommodations = accommodationApiClient.fetchAccommodations(
-                request.getDestination(),
+                request.getLocation(),
                 request.getAccommodationType(),
                 request.getTotalBudget());
 
         // 3. Fetch restaurants from API
         List<Restaurant> restaurants = restaurantApiClient.fetchRestaurants(
-                request.getDestination(),
+                request.getLocation(),
                 request.getCuisinePreferences());
 
         // 4. Fetch activities from API
         List<Activity> activities = activityApiClient.fetchActivities(
-                request.getDestination(),
+                request.getLocation(),
                 request.getActivityInterests());
 
         // 5. Allocate budget

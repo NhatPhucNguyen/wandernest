@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ItineraryRequestDTO {
     private String destination;
+    private Location location;
     private LocalDate startDate;
     private LocalDate endDate;
     private int numberOfTravelers;

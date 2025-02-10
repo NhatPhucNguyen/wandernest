@@ -51,12 +51,12 @@ public class ItineraryResponseDTO {
 @NoArgsConstructor
 class AccommodationDTO {
     private String name;
-    private double pricePerNight;
+    private double priceLevel;
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     public AccommodationDTO(Accommodation accommodation) {
         this.name = accommodation.getName();
-        this.pricePerNight = accommodation.getPricePerNight();
+        this.priceLevel = accommodation.getPriceLevel();
     }
 }
 
@@ -68,7 +68,7 @@ class ActivityDTO {
     private LocalDate date;
     public ActivityDTO (Activity activity){
         this.name = activity.getName();
-        this.cost = activity.getCost();
+        this.cost = activity.getPriceLevel();
         this.date = activity.getDate();
     }
 }
@@ -78,12 +78,11 @@ class ActivityDTO {
 class RestaurantDTO {
     private String name;
     private String cuisine;
-    private double priceRange;
+    private double priceLevel;
     private LocalDate date;
     public RestaurantDTO (Restaurant restaurant){
         this.name = restaurant.getName();
-        this.cuisine = restaurant.getCuisine();
-        this.priceRange = restaurant.getPriceRange();
+        this.priceLevel = restaurant.getPriceLevel();
         this.date = restaurant.getDate();
     }
 }

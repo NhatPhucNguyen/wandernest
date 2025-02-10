@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wn.wandernest.dtos.ItineraryRequestDTO;
 import com.wn.wandernest.dtos.ItineraryResponseDTO;
+import com.wn.wandernest.dtos.Location;
 import com.wn.wandernest.enums.AccommodationType;
 import com.wn.wandernest.enums.ActivityInterest;
 import com.wn.wandernest.enums.Cuisine;
@@ -29,6 +30,7 @@ public class ItineraryController {
         Itinerary itinerary = itineraryService.generateItinerary(requestDTO);
         return ResponseEntity.ok(itinerary);
     }
+
     public ItineraryService itineraryService;
 
     public ItineraryController(ItineraryService itineraryService) {
@@ -39,13 +41,15 @@ public class ItineraryController {
     public ResponseEntity<ItineraryResponseDTO> generateItinerary() {
         ItineraryRequestDTO itineraryRequestDTO = new ItineraryRequestDTO();
         itineraryRequestDTO.setDestination("Paris");
+        itineraryRequestDTO.setLocation(new Location(15,20));
         itineraryRequestDTO.setStartDate(LocalDate.of(2023, 12, 1));
         itineraryRequestDTO.setEndDate(LocalDate.of(2023, 12, 10));
         itineraryRequestDTO.setNumberOfTravelers(2);
         itineraryRequestDTO.setTotalBudget(3000.00);
         itineraryRequestDTO.setAccommodationType(AccommodationType.HOTEL);
         itineraryRequestDTO.setCuisinePreferences(Arrays.asList(Cuisine.ITALIAN, Cuisine.JAPANESE));
-        itineraryRequestDTO.setActivityInterests(Arrays.asList(ActivityInterest.SIGHTSEEING, ActivityInterest.CULTURAL));
+        itineraryRequestDTO
+                .setActivityInterests(Arrays.asList(ActivityInterest.SIGHTSEEING, ActivityInterest.CULTURAL));
         Itinerary itinerary = itineraryService.generateItinerary(itineraryRequestDTO);
         ItineraryResponseDTO itineraryResponseDTO = new ItineraryResponseDTO(itinerary);
         return ResponseEntity.ok(itineraryResponseDTO);

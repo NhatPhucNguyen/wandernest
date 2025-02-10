@@ -31,7 +31,7 @@ public class Activity {
     
     private String name;
     private String location;
-    private double cost;
+    private double priceLevel;
     private LocalDate date;
     
     @Enumerated(EnumType.STRING)
