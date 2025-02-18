@@ -4,30 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class PlacesResponse {
-    private List<PlaceData> results; // List of places
-    private String status;
+    private List<PlaceData> places; // List of places
 
     @Data
     public static class PlaceData {
-        public String business_status;
-        public Geometry geometry;
-        public String icon;
-        public String icon_background_color;
-        public String icon_mask_base_uri;
-        public String name;
-        public OpeningHours opening_hours;
-        public ArrayList<Photo> photos;
-        public String place_id;
-        public int price_level;
-        public double rating;
-        public String reference;
-        public String scope;
+        public String id;
         public ArrayList<String> types;
-        public int user_ratings_total;
-        public String vicinity;
+        public String formattedAddress;
+        public PlaceLocation location;
+        public double rating;
+        public String websiteUri;
+        public String priceLevel;
+        public DisplayName displayName;
+        public CurrentOpeningHours currentOpeningHours;
+        public ArrayList<Photo> photos;
+        public PriceRange priceRange;
 
         public static class Geometry {
             public Location location;
@@ -38,10 +33,34 @@ public class PlacesResponse {
         }
 
         public static class Photo {
-            public int height;
-            public ArrayList<String> html_attributions;
-            public String photo_reference;
-            public int width;
+            public String name;
+            public int widthPx;
+            public int heightPx;
+        }
+
+        public static class DisplayName {
+            public String text;
+            public String languageCode;
+        }
+
+        public static class PriceRange {
+            public PriceData startPrice;
+            public PriceData endPrice;
+        }
+
+        public static class PriceData {
+            public String currencyCode;
+            public String units;
+        }
+
+        public static class CurrentOpeningHours {
+            public boolean openNow;
+            public ArrayList<String> weekdayDescriptions;
+        }
+
+        public static class PlaceLocation {
+            public double latitude;
+            public double longitude;
         }
     }
 }

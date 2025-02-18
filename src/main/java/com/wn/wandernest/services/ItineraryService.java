@@ -3,67 +3,63 @@ package com.wn.wandernest.services;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.wn.wandernest.dtos.ItineraryRequestDTO;
 import com.wn.wandernest.enums.ItineraryStatus;
-import com.wn.wandernest.models.Accommodation;
-import com.wn.wandernest.models.Activity;
 import com.wn.wandernest.models.BudgetAllocation;
 import com.wn.wandernest.models.Itinerary;
-import com.wn.wandernest.models.Restaurant;
+import com.wn.wandernest.models.User;
 import com.wn.wandernest.repositories.ItineraryRepository;
+import com.wn.wandernest.repositories.UserRepository;
+import com.wn.wandernest.utils.JwtTokenUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ItineraryService {
-    private final AccommodationApiClient accommodationApiClient;
-    private final RestaurantApiClient restaurantApiClient;
-    private final ActivityApiClient activityApiClient;
     private final ItineraryRepository itineraryRepository;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final UserRepository userRepository;
 
-    public Itinerary generateItinerary(ItineraryRequestDTO request) {
+    // TODO: Modify generateItinerary
+    public Itinerary generateItinerary(HttpServletRequest request, ItineraryRequestDTO itineraryRequest) {
         // 1. Validate input
-        validateRequest(request);
+        validateRequest(itineraryRequest);
 
-        // 2. Fetch accommodations from API
-        List<Accommodation> accommodations = accommodationApiClient.fetchAccommodations(
-                request.getLocation(),
-                request.getAccommodationType(),
-                request.getTotalBudget());
-
-        // 3. Fetch restaurants from API
-        List<Restaurant> restaurants = restaurantApiClient.fetchRestaurants(
-                request.getLocation(),
-                request.getCuisinePreferences());
-
-        // 4. Fetch activities from API
-        List<Activity> activities = activityApiClient.fetchActivities(
-                request.getLocation(),
-                request.getActivityInterests());
-
-        // 5. Allocate budget
-        BudgetAllocation budget = allocateBudget(request.getTotalBudget(), request.getNumberOfTravelers(),
-                request.getStartDate(), request.getEndDate());
-
+        // 2. Allocate budget
+        BudgetAllocation budget = allocateBudget(itineraryRequest.getTotalBudget(),
+                itineraryRequest.getNumberOfTravelers(),
+                itineraryRequest.getStartDate(), itineraryRequest.getEndDate());
+        // 3.Get user id
+        final String header = request.getHeader("Authorization");
+        final String token = header.replace("Bearer ", "");
+        String username = jwtTokenUtil.extractUsername(token);
+        Optional<User> user = userRepository.findByUsername(username);
         // 6. Build and save itinerary
         Itinerary itinerary = Itinerary.builder()
-                .destination(request.getDestination())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .numberOfTravelers(request.getNumberOfTravelers())
-                .totalBudget(request.getTotalBudget())
+                .destination(itineraryRequest.getDestination())
+                .startDate(itineraryRequest.getStartDate())
+                .endDate(itineraryRequest.getEndDate())
+                .numberOfTravelers(itineraryRequest.getNumberOfTravelers())
+                .totalBudget(itineraryRequest.getTotalBudget())
                 .status(ItineraryStatus.DRAFT)
-                .accommodations(accommodations)
-                .restaurants(restaurants)
-                .activities(activities)
                 .budgetAllocation(budget)
+                .user(user.get())
                 .build();
-
         return itineraryRepository.save(itinerary);
+    }
+
+    public List<Itinerary> getItinerariesByUser(HttpServletRequest request) {
+        final String header = request.getHeader("Authorization");
+        final String token = header.replace("Bearer ", "");
+        String username = jwtTokenUtil.extractUsername(token);
+        Optional<User> user = userRepository.findByUsername(username);
+        return itineraryRepository.findByUser(user.get());
     }
 
     private BudgetAllocation allocateBudget(double totalBudget, int numberOfTravelers, LocalDate startDate,

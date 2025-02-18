@@ -1,10 +1,6 @@
 package com.wn.wandernest.models;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -22,12 +18,18 @@ import lombok.NoArgsConstructor;
 @Table(name = "restaurants")
 public class Restaurant {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
-    private int priceLevel;
-    private LocalDate date;
+    private String address;
+    private String priceLevel;
+    private String photoName;
+    private double startPrice;
+    private double endPrice;
+    private double lat;
+    private double lng;
+    private double rating;
+    private String websiteUri;
 
     @ManyToOne
     @JoinColumn(name = "itinerary_id")

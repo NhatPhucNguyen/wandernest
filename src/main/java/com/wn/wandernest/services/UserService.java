@@ -7,13 +7,12 @@ import org.springframework.stereotype.Service;
 import com.wn.wandernest.models.User;
 import com.wn.wandernest.repositories.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
@@ -30,4 +29,5 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+    //TODO: Create functions to handle validation request
 }

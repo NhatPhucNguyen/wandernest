@@ -1,7 +1,7 @@
 package com.wn.wandernest.controllers;
 
-import java.time.LocalDate;
-import java.util.Arrays;
+import java.io.Console;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,45 +13,36 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wn.wandernest.dtos.ItineraryRequestDTO;
 import com.wn.wandernest.dtos.ItineraryResponseDTO;
-import com.wn.wandernest.dtos.Location;
-import com.wn.wandernest.enums.AccommodationType;
-import com.wn.wandernest.enums.ActivityInterest;
-import com.wn.wandernest.enums.Cuisine;
 import com.wn.wandernest.models.Itinerary;
 import com.wn.wandernest.services.ItineraryService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 @RequestMapping("/api/itineraries")
 public class ItineraryController {
 
+    private final ItineraryService itineraryService;
+
     @PostMapping("/generate")
-    public ResponseEntity<Itinerary> generateItinerary(@RequestBody ItineraryRequestDTO requestDTO) {
-        Itinerary itinerary = itineraryService.generateItinerary(requestDTO);
-        return ResponseEntity.ok(itinerary);
-    }
-
-    public ItineraryService itineraryService;
-
-    public ItineraryController(ItineraryService itineraryService) {
-        this.itineraryService = itineraryService;
-    }
-
-    @GetMapping("generate")
-    public ResponseEntity<ItineraryResponseDTO> generateItinerary() {
-        ItineraryRequestDTO itineraryRequestDTO = new ItineraryRequestDTO();
-        itineraryRequestDTO.setDestination("Paris");
-        itineraryRequestDTO.setLocation(new Location(15,20));
-        itineraryRequestDTO.setStartDate(LocalDate.of(2023, 12, 1));
-        itineraryRequestDTO.setEndDate(LocalDate.of(2023, 12, 10));
-        itineraryRequestDTO.setNumberOfTravelers(2);
-        itineraryRequestDTO.setTotalBudget(3000.00);
-        itineraryRequestDTO.setAccommodationType(AccommodationType.HOTEL);
-        itineraryRequestDTO.setCuisinePreferences(Arrays.asList(Cuisine.ITALIAN, Cuisine.JAPANESE));
-        itineraryRequestDTO
-                .setActivityInterests(Arrays.asList(ActivityInterest.SIGHTSEEING, ActivityInterest.CULTURAL));
-        Itinerary itinerary = itineraryService.generateItinerary(itineraryRequestDTO);
+    public ResponseEntity<?> generateItinerary(HttpServletRequest request,
+            @RequestBody ItineraryRequestDTO requestDTO) {
+        Itinerary itinerary = itineraryService.generateItinerary(request, requestDTO);
         ItineraryResponseDTO itineraryResponseDTO = new ItineraryResponseDTO(itinerary);
         return ResponseEntity.ok(itineraryResponseDTO);
+    }
+
+    // TODO: Add more endpoints for itinerary management (e.g., get, update, delete
+    // itineraries)
+    @GetMapping()
+    public ResponseEntity<?> getItineraryByUser(HttpServletRequest request){
+        List<Itinerary> itineraries = itineraryService.getItinerariesByUser(request);
+        List<ItineraryResponseDTO> response = itineraries.stream()
+            .map(ItineraryResponseDTO::new)
+            .toList();
+        return ResponseEntity.ok(response);
     }
 }

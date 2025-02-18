@@ -1,14 +1,10 @@
 package com.wn.wandernest.models;
 
-import java.time.LocalDate;
-
 import com.wn.wandernest.enums.ActivityType;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -26,13 +22,16 @@ import lombok.NoArgsConstructor;
 @Table(name = "activities")
 public class Activity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     private String name;
-    private String location;
-    private double priceLevel;
-    private LocalDate date;
+    private String address;
+    private String priceLevel;
+    private String photoName;
+    private double lat;
+    private double lng;
+    private double rating;
+    private String websiteUri;
     
     @Enumerated(EnumType.STRING)
     private ActivityType type; // SIGHTSEEING, ADVENTURE, etc.

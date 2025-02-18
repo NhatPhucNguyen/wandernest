@@ -6,43 +6,49 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.wn.wandernest.configs.RestaurantApiConfig;
 import com.wn.wandernest.dtos.Location;
 import com.wn.wandernest.dtos.PlacesResponse;
+import com.wn.wandernest.dtos.RestaurantDTO;
 import com.wn.wandernest.enums.Cuisine;
-import com.wn.wandernest.models.Restaurant;
 
 import lombok.RequiredArgsConstructor;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class RestaurantApiClient {
-    private final RestTemplate restTemplate;
-    private final RestaurantApiConfig config;
+        private final RestTemplate restTemplate;
+        private final RestaurantApiConfig config;
 
-    public List<Restaurant> fetchRestaurants(Location location, List<Cuisine> cuisines) {
-        // Build URL with cuisine filters
-        String cuisineQuery = cuisines.stream()
-                .map(Enum::name)
-                .collect(Collectors.joining(","));
-        String url = String.format("%s?location=%s&cuisines=%s&key=%s",
-                config.getBaseUrl(),
-                URLEncoder.encode(location.toString(), StandardCharsets.UTF_8),
-                cuisineQuery,
-                config.getApiKey());
+        public List<RestaurantDTO> fetchRestaurants(Location location, List<Cuisine> cuisines) {
+                // TODO: Build URL with cuisine filters
+                String url = String.format("%s?location=%s&key=%s",
+                                config.getBaseUrl(),
+                                URLEncoder.encode(location.toString(), StandardCharsets.UTF_8),
+                                config.getApiKey());
 
-        // Call TripAdvisor API
-        ResponseEntity<PlacesResponse> response = restTemplate.getForEntity(url, PlacesResponse.class);
-
-        // Map response to Restaurant entities
-        return response.getBody().getResults().stream()
-                .map(apiItem -> Restaurant.builder()
-                        .name(apiItem.getName())
-                        .priceLevel(apiItem.getPrice_level())
-                        .build())
-                .toList();
-    }
+                // Call TripAdvisor API
+                ResponseEntity<PlacesResponse> response = restTemplate.postForEntity(url, null, PlacesResponse.class);
+                PlacesResponse responseBody = response.getBody();
+                if (responseBody == null || responseBody.getPlaces() == null) {
+                        return List.of();
+                }
+                // Map response to Restaurant entities
+                return responseBody.getPlaces().stream()
+                                .map(apiItem -> RestaurantDTO.builder()
+                                                .name(apiItem.displayName.text)
+                                                .priceLevel(apiItem.priceLevel)
+                                                .id(apiItem.id).address(apiItem.formattedAddress)
+                                                .location(new Location(apiItem.location.latitude,
+                                                                apiItem.location.longitude))
+                                                .photoName(apiItem.photos.get(0).name)
+                                                .priceRange(apiItem.priceRange)
+                                                .websiteUri(apiItem.websiteUri)
+                                                .rating(apiItem.rating)
+                                                .build())
+                                .toList();
+        }
 }

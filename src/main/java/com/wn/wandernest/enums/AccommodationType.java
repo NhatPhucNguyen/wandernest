@@ -1,5 +1,5 @@
 package com.wn.wandernest.enums;
 
 public enum AccommodationType {
-    HOTEL, HOSTEL, AIRBNB, BED_AND_BREAKFAST
+    HOTEL, MOTEL, RESORT_HOTEL, BED_AND_BREAKFAST, FARMSTAY
 }
