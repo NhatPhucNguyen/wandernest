@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -26,29 +26,18 @@ import com.wn.wandernest.utils.JwtTokenUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin
+@RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
     private final TokenBlacklist tokenBlacklist;
-
-    public AuthController(AuthenticationManager authenticationManager,
-            UserService userService,
-            JwtTokenUtil jwtTokenUtil,
-            PasswordEncoder passwordEncoder,
-            TokenBlacklist tokenBlacklist) {
-        this.authenticationManager = authenticationManager;
-        this.userService = userService;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenBlacklist = tokenBlacklist;
-    }
 
     // Registration endpoint
     @PostMapping("/register")
@@ -145,6 +134,12 @@ public class AuthController {
         tokenBlacklist.addToBlacklist(token);
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok(new ApiResponseDTO(Status.SUCCESS, "User logged out successfully!", null));
+    }
+
+    // Validate token endpoint
+    @GetMapping("/validate-token")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authorizationHeader) {
+        return ResponseEntity.ok(new ApiResponseDTO(Status.SUCCESS, "Token is valid!", null));
     }
 
     // DTO Classes

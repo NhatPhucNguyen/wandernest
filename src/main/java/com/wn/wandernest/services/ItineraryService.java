@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.wn.wandernest.dtos.ItineraryRequestDTO;
+import com.wn.wandernest.dtos.ItineraryResponseDTO;
 import com.wn.wandernest.enums.ItineraryStatus;
 import com.wn.wandernest.models.BudgetAllocation;
 import com.wn.wandernest.models.Itinerary;
@@ -16,6 +17,7 @@ import com.wn.wandernest.repositories.ItineraryRepository;
 import com.wn.wandernest.repositories.UserRepository;
 import com.wn.wandernest.utils.JwtTokenUtil;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -54,12 +56,23 @@ public class ItineraryService {
         return itineraryRepository.save(itinerary);
     }
 
-    public List<Itinerary> getItinerariesByUser(HttpServletRequest request) {
+    public List<ItineraryResponseDTO> getItinerariesByUser(HttpServletRequest request) {
         final String header = request.getHeader("Authorization");
         final String token = header.replace("Bearer ", "");
         String username = jwtTokenUtil.extractUsername(token);
-        Optional<User> user = userRepository.findByUsername(username);
-        return itineraryRepository.findByUser(user.get());
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
+        List<Itinerary> itineraries = itineraryRepository.findByUser(user);
+        List<ItineraryResponseDTO> response = itineraries.stream()
+                .map(ItineraryResponseDTO::new)
+                .toList();
+        return response;
+    }
+
+    public Itinerary deleteItineraryById(Long id) {
+        Itinerary itinerary = itineraryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
+        itineraryRepository.deleteById(id);
+        return itinerary;
     }
 
     private BudgetAllocation allocateBudget(double totalBudget, int numberOfTravelers, LocalDate startDate,

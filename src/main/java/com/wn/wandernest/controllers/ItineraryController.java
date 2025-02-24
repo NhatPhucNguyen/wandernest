@@ -1,11 +1,11 @@
 package com.wn.wandernest.controllers;
 
-import java.io.Console;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping("/api/itineraries")
 public class ItineraryController {
@@ -38,11 +37,18 @@ public class ItineraryController {
     // TODO: Add more endpoints for itinerary management (e.g., get, update, delete
     // itineraries)
     @GetMapping()
-    public ResponseEntity<?> getItineraryByUser(HttpServletRequest request){
-        List<Itinerary> itineraries = itineraryService.getItinerariesByUser(request);
-        List<ItineraryResponseDTO> response = itineraries.stream()
-            .map(ItineraryResponseDTO::new)
-            .toList();
+    public ResponseEntity<?> getItineraryByUser(HttpServletRequest request) {
+        List<ItineraryResponseDTO> response = itineraryService.getItinerariesByUser(request);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteItinerary(@PathVariable Long id) {
+        try {
+            Itinerary itinerary = itineraryService.deleteItineraryById(id);
+            return ResponseEntity.ok(new ItineraryResponseDTO(itinerary));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
