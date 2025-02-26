@@ -29,15 +29,15 @@ public class TravelPreferences {
     private Long id;
     
     @Enumerated(EnumType.STRING)
-    private AccommodationType accommodationType; // HOTEL, HOSTEL, AIRBNB
+    private AccommodationType accommodationType;
     
     @ElementCollection
     @Enumerated(EnumType.STRING)
-    private List<Cuisine> cuisinePreferences; // ITALIAN, VEGETARIAN, etc.
+    private List<Cuisine> cuisinePreferences;
     
     @ElementCollection
     @Enumerated(EnumType.STRING)
-    private List<ActivityInterest> activityInterests; // ADVENTURE, CULTURAL, etc.
+    private List<ActivityInterest> activityInterests;
     
     @OneToOne
     @JoinColumn(name = "itinerary_id")

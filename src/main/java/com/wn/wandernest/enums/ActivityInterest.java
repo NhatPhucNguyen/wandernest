@@ -1,5 +1,5 @@
 package com.wn.wandernest.enums;
 
 public enum ActivityInterest {
-    ADVENTURE, CULTURAL, SIGHTSEEING
+    CASINO, HISTORICAL_PLACES, MONUMENT, MUSEUM, BEACH, HIKING_AREA, TOURIST_ATTRACTION
 }

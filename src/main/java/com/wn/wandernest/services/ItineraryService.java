@@ -12,6 +12,7 @@ import com.wn.wandernest.dtos.ItineraryResponseDTO;
 import com.wn.wandernest.enums.ItineraryStatus;
 import com.wn.wandernest.models.BudgetAllocation;
 import com.wn.wandernest.models.Itinerary;
+import com.wn.wandernest.models.TravelPreferences;
 import com.wn.wandernest.models.User;
 import com.wn.wandernest.repositories.ItineraryRepository;
 import com.wn.wandernest.repositories.UserRepository;
@@ -37,12 +38,19 @@ public class ItineraryService {
         BudgetAllocation budget = allocateBudget(itineraryRequest.getTotalBudget(),
                 itineraryRequest.getNumberOfTravelers(),
                 itineraryRequest.getStartDate(), itineraryRequest.getEndDate());
+
         // 3.Get user id
         final String header = request.getHeader("Authorization");
         final String token = header.replace("Bearer ", "");
         String username = jwtTokenUtil.extractUsername(token);
         Optional<User> user = userRepository.findByUsername(username);
-        // 6. Build and save itinerary
+
+        // 4. Create travel preferences from request
+        TravelPreferences travelPreferences = new TravelPreferences();
+        travelPreferences.setAccommodationType(itineraryRequest.getAccommodationType());
+        travelPreferences.setCuisinePreferences(itineraryRequest.getCuisinePreferences());
+        travelPreferences.setActivityInterests(itineraryRequest.getActivityInterests());
+        // 5. Build and save itinerary
         Itinerary itinerary = Itinerary.builder()
                 .destination(itineraryRequest.getDestination())
                 .startDate(itineraryRequest.getStartDate())
@@ -52,6 +60,7 @@ public class ItineraryService {
                 .status(ItineraryStatus.DRAFT)
                 .budgetAllocation(budget)
                 .user(user.get())
+                .travelPreferences(travelPreferences)
                 .build();
         return itineraryRepository.save(itinerary);
     }
@@ -60,19 +69,18 @@ public class ItineraryService {
         final String header = request.getHeader("Authorization");
         final String token = header.replace("Bearer ", "");
         String username = jwtTokenUtil.extractUsername(token);
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
         List<Itinerary> itineraries = itineraryRepository.findByUser(user);
+
         List<ItineraryResponseDTO> response = itineraries.stream()
                 .map(ItineraryResponseDTO::new)
                 .toList();
         return response;
     }
 
-    public Itinerary deleteItineraryById(Long id) {
-        Itinerary itinerary = itineraryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
+    public void deleteItineraryById(Long id) {
         itineraryRepository.deleteById(id);
-        return itinerary;
     }
 
     private BudgetAllocation allocateBudget(double totalBudget, int numberOfTravelers, LocalDate startDate,
@@ -92,7 +100,16 @@ public class ItineraryService {
         return budget;
     }
 
+    public Itinerary updateItineraryStatus(Long id, ItineraryStatus status) {
+        Itinerary itinerary = itineraryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
+        itinerary.setStatus(status);
+        return itineraryRepository.save(itinerary);
+    }
+
     private void validateRequest(ItineraryRequestDTO request) {
-        // Validate dates, budget, etc.
+        if (request.getEndDate().isBefore(request.getStartDate())) {
+            throw new IllegalArgumentException("End date must be after start date");
+        }
     }
 }

@@ -9,6 +9,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -46,7 +47,8 @@ public class Itinerary {
     @JoinColumn(name = "user_id")
     private User user;
     
-    @OneToOne(mappedBy = "itinerary", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "travel_preferences_id", referencedColumnName = "id")
     private TravelPreferences travelPreferences;
     
     @OneToMany(mappedBy = "itinerary", cascade = CascadeType.ALL)
