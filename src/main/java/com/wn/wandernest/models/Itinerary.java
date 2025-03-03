@@ -39,6 +39,8 @@ public class Itinerary {
     private LocalDate endDate;
     private int numberOfTravelers;
     private double totalBudget;
+    private double lat;
+    private double lng;
     
     @Enumerated(EnumType.STRING)
     private ItineraryStatus status; // DRAFT, ACTIVE, COMPLETED

@@ -1,9 +1,10 @@
 package com.wn.wandernest.models;
 
-import java.time.LocalDate;
+import java.util.List;
 
 import com.wn.wandernest.enums.AccommodationType;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -24,13 +25,11 @@ import lombok.NoArgsConstructor;
 @Table(name = "accommodations")
 public class Accommodation {
     @Id
-    private Long id;
+    private String id;
     
     private String name;
     private String address;
     private String priceLevel;
-    private LocalDate checkInDate;
-    private LocalDate checkOutDate;
     private String photoName;
     private double startPrice;
     private double endPrice;
@@ -39,8 +38,9 @@ public class Accommodation {
     private double rating;
     private String websiteUri;
 
+    @ElementCollection
     @Enumerated(EnumType.STRING)
-    private AccommodationType type; // HOTEL, HOSTEL, etc.
+    private List<AccommodationType> types; // HOTEL, HOSTEL, etc.
     
     @ManyToOne
     @JoinColumn(name = "itinerary_id")

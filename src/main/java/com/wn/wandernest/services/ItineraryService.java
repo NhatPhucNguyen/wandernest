@@ -61,6 +61,8 @@ public class ItineraryService {
                 .budgetAllocation(budget)
                 .user(user.get())
                 .travelPreferences(travelPreferences)
+                .lat(itineraryRequest.getLocation().getLat())
+                .lng(itineraryRequest.getLocation().getLng())
                 .build();
         return itineraryRepository.save(itinerary);
     }

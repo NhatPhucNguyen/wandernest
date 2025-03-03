@@ -62,8 +62,8 @@ public class AccommodationControllerTest {
                         .location(location)
                         .types(Arrays.asList(AccommodationType.HOTEL))
                         .build());
-
-        when(accommodationApiClient.fetchAccommodations(location, null, 0)).thenReturn(mockAccommodations);
+        Long exampleLong = 1L;
+        when(accommodationApiClient.fetchAccommodations(exampleLong)).thenReturn(mockAccommodations);
 
         mockMvc.perform(get("/api/accommodations")
                 .param("lat", String.valueOf(location.getLat()))

@@ -14,18 +14,19 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ItineraryResponseDTO {
-    private Long id;
-    private String destination;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private double totalBudget;
-    private ItineraryStatus status;
-    private BudgetAllocationDTO budgetAllocation;
-    private List<AccommodationDTO> accommodations;
-    private List<ActivityDTO> activities;
-    private List<RestaurantDTO> restaurants;
-    private int travelers;
-    private TravelPreferencesDTO travelPreferences;
+        private Long id;
+        private String destination;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private double totalBudget;
+        private Location location;
+        private ItineraryStatus status;
+        private BudgetAllocationDTO budgetAllocation;
+        private List<AccommodationDTO> accommodations;
+        private List<ActivityDTO> activities;
+        private List<RestaurantDTO> restaurants;
+        private int travelers;
+        private TravelPreferencesDTO travelPreferences;
 
     public ItineraryResponseDTO(Itinerary itinerary) {
         this.id = itinerary.getId();
@@ -37,6 +38,7 @@ public class ItineraryResponseDTO {
         this.travelers = itinerary.getNumberOfTravelers();
         this.budgetAllocation = new BudgetAllocationDTO(itinerary.getBudgetAllocation());
         this.travelPreferences = new TravelPreferencesDTO(itinerary.getTravelPreferences());
+        this.location = new Location(itinerary.getLat(), itinerary.getLng());
         this.accommodations = Optional.ofNullable(itinerary.getAccommodations())
                 .orElse(List.of())
                 .stream()

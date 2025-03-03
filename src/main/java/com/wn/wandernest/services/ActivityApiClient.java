@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.wn.wandernest.configs.ActivityApiConfig;
+import com.wn.wandernest.configs.PlacesApiConfig;
 import com.wn.wandernest.dtos.ActivityDTO;
 import com.wn.wandernest.dtos.Location;
 import com.wn.wandernest.dtos.PlacesResponse;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ActivityApiClient {
         private final RestTemplate restTemplate;
-        private final ActivityApiConfig config;
+        private final PlacesApiConfig config;
 
         public List<ActivityDTO> fetchActivities(Location location, List<ActivityInterest> interests) {
                 // Build URL with activity filters

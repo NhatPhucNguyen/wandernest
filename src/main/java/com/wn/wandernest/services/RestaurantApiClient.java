@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.wn.wandernest.configs.RestaurantApiConfig;
+import com.wn.wandernest.configs.PlacesApiConfig;
 import com.wn.wandernest.dtos.Location;
 import com.wn.wandernest.dtos.PlacesResponse;
 import com.wn.wandernest.dtos.RestaurantDTO;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RestaurantApiClient {
         private final RestTemplate restTemplate;
-        private final RestaurantApiConfig config;
+        private final PlacesApiConfig config;
 
         public List<RestaurantDTO> fetchRestaurants(Location location, List<Cuisine> cuisines) {
                 // TODO: Build URL with cuisine filters
