@@ -10,10 +10,10 @@ import lombok.Getter;
 public class PlacesApiConfig {
     @Value("https://3aa03863-2530-4d5a-8bc0-3391189c2bb9.mock.pstmn.io")
     private String baseUrl;
-    @Value("${GOOGLE_KEY}")
+    @Value("${google.key}")
     private String apiKey;
     //TODO: Implement google photo
-    // @Value("${GOOGLE_ACCESS_KEY}")
-    // private String accessKey;
+    @Value("${google.accessToken}")
+    private String accessKey;
     private int maxRetries = 1;
 }

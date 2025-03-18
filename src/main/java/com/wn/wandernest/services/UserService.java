@@ -29,5 +29,4 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-    //TODO: Create functions to handle validation request
 }

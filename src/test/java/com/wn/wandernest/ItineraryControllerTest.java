@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wn.wandernest.controllers.ItineraryController;
 import com.wn.wandernest.dtos.ItineraryRequestDTO;
+import com.wn.wandernest.enums.AccommodationType;
+import com.wn.wandernest.enums.ActivityInterest;
+import com.wn.wandernest.enums.Cuisine;
 import com.wn.wandernest.models.BudgetAllocation;
 import com.wn.wandernest.models.Itinerary;
+import com.wn.wandernest.models.TravelPreferences;
 import com.wn.wandernest.security.TokenBlacklist;
 import com.wn.wandernest.services.CustomUserDetailsService;
 import com.wn.wandernest.services.ItineraryService;
@@ -59,6 +64,12 @@ public class ItineraryControllerTest {
             .transportation(700.00)
             .build();
 
+        TravelPreferences travelPreferences = TravelPreferences.builder()
+            .accommodationType(AccommodationType.HOTEL)
+            .activityInterests(List.of(ActivityInterest.BEACH))
+            .cuisinePreferences(List.of(Cuisine.JAPANESE_RESTAURANT))
+            .build();
+
         Itinerary itinerary = Itinerary.builder()
             .destination("Paris")
             .startDate(LocalDate.of(2023, 12, 1))
@@ -66,6 +77,7 @@ public class ItineraryControllerTest {
             .numberOfTravelers(2)
             .totalBudget(3000.00)
             .budgetAllocation(budgetAllocation)
+            .travelPreferences(travelPreferences)
             .build();
 
         when(itineraryService.generateItinerary(any(),any(ItineraryRequestDTO.class))).thenReturn(itinerary);
@@ -83,6 +95,6 @@ public class ItineraryControllerTest {
         mockMvc.perform(post("/api/itineraries/generate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDTO)))
-            .andExpect(status().isOk());
+            .andExpect(status().isCreated());
     }
 }

@@ -66,8 +66,7 @@ public class AccommodationControllerTest {
         when(accommodationApiClient.fetchAccommodations(exampleLong)).thenReturn(mockAccommodations);
 
         mockMvc.perform(get("/api/accommodations")
-                .param("lat", String.valueOf(location.getLat()))
-                .param("lng", String.valueOf(location.getLng())))
+                .queryParam("itineraryId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Hotel Paris"))
                 .andExpect(jsonPath("$[0].address").value("123 Paris St"))

@@ -20,7 +20,7 @@ public class AccommodationDTO {
     private String name;
     private String address;
     private String priceLevel;
-    private String photoName;
+    private String photoUri;
     private Location location;
     private String websiteUri;
     private double rating;

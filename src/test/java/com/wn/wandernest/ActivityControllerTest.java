@@ -60,7 +60,7 @@ public class ActivityControllerTest {
                         .location(location)
                         .build());
 
-        when(activityApiClient.fetchActivities(location, null)).thenReturn(mockActivities);
+        when(activityApiClient.fetchActivities(1L)).thenReturn(mockActivities);
 
         mockMvc.perform(get("/api/activities")
                 .param("lat", String.valueOf(location.getLat()))

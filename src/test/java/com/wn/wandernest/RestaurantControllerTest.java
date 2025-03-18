@@ -60,11 +60,10 @@ public class RestaurantControllerTest {
                         .location(location)
                         .build());
 
-        when(restaurantApiClient.fetchRestaurants(location, null)).thenReturn(mockRestaurants);
+        when(restaurantApiClient.fetchRestaurants(1L)).thenReturn(mockRestaurants);
 
         mockMvc.perform(get("/api/restaurants")
-                .param("lat", String.valueOf(location.getLat()))
-                .param("lng", String.valueOf(location.getLng())))
+                .queryParam("itineraryId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Le Meurice"))
                 .andExpect(jsonPath("$[0].address").value("228 Rue de Rivoli, 75001 Paris, France"))

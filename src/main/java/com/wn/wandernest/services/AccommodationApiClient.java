@@ -30,7 +30,7 @@ public class AccommodationApiClient {
     private final PlacesApiConfig config; // Contains API key, base URL, etc.
     private final ItineraryRepository itineraryRepository;
     private final AccommodationRepository accommodationRepository;
-
+    private final PhotoGen photoGen;
     // Cache accommodations to reduce API calls (e.g., Caffeine)
     public List<AccommodationDTO> fetchAccommodations(Long itineraryId) {
 
@@ -104,7 +104,7 @@ public class AccommodationApiClient {
                                     .filter(typeEnum -> typeEnum != null)
                                     .collect(Collectors.toList()))
                             .location(new Location(apiItem.location.latitude, apiItem.location.longitude))
-                            .photoName(apiItem.photos.get(0).name)
+                            .photoUri(photoGen.generatePhotoUri(apiItem.photos.get(0).name))
                             .websiteUri(apiItem.websiteUri)
                             .rating(apiItem.rating)
                             .isSaved(isSaved)
@@ -131,7 +131,7 @@ public class AccommodationApiClient {
         accommodation.setTypes(accommodationDTO.getTypes());
         accommodation.setLat(accommodationDTO.getLocation().getLat());
         accommodation.setLng(accommodationDTO.getLocation().getLng());
-        accommodation.setPhotoName(accommodationDTO.getPhotoName());
+        accommodation.setPhotoUri(accommodationDTO.getPhotoUri());
         accommodation.setWebsiteUri(accommodationDTO.getWebsiteUri());
         accommodation.setRating(accommodationDTO.getRating());
         accommodation.setItinerary(itinerary);

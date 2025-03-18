@@ -29,7 +29,6 @@ public class ItineraryService {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
 
-    // TODO: Modify generateItinerary
     public Itinerary generateItinerary(HttpServletRequest request, ItineraryRequestDTO itineraryRequest) {
         // 1. Validate input
         validateRequest(itineraryRequest);
