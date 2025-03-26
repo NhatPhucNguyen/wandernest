@@ -21,7 +21,6 @@ public class ItineraryResponseDTO {
         private double totalBudget;
         private Location location;
         private ItineraryStatus status;
-        private BudgetAllocationDTO budgetAllocation;
         private List<AccommodationDTO> accommodations;
         private List<ActivityDTO> activities;
         private List<RestaurantDTO> restaurants;
@@ -33,10 +32,9 @@ public class ItineraryResponseDTO {
         this.destination = itinerary.getDestination();
         this.startDate = itinerary.getStartDate();
         this.endDate = itinerary.getEndDate();
-        this.totalBudget = itinerary.getTotalBudget();
+        this.totalBudget = itinerary.getBudgetAllocation().getTotalBudget();
         this.status = itinerary.getStatus();
         this.travelers = itinerary.getNumberOfTravelers();
-        this.budgetAllocation = new BudgetAllocationDTO(itinerary.getBudgetAllocation());
         this.travelPreferences = new TravelPreferencesDTO(itinerary.getTravelPreferences());
         this.location = new Location(itinerary.getLat(), itinerary.getLng());
         this.accommodations = Optional.ofNullable(itinerary.getAccommodations())

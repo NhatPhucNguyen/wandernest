@@ -3,7 +3,6 @@ package com.wn.wandernest.services;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,7 @@ import com.wn.wandernest.models.User;
 import com.wn.wandernest.repositories.ItineraryRepository;
 import com.wn.wandernest.repositories.UserRepository;
 import com.wn.wandernest.utils.JwtTokenUtil;
+import com.wn.wandernest.utils.UserUtils;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +29,7 @@ public class ItineraryService {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
 
-    public Itinerary generateItinerary(HttpServletRequest request, ItineraryRequestDTO itineraryRequest) {
+    public Itinerary generateItinerary(ItineraryRequestDTO itineraryRequest) {
         // 1. Validate input
         validateRequest(itineraryRequest);
 
@@ -37,12 +37,8 @@ public class ItineraryService {
         BudgetAllocation budget = allocateBudget(itineraryRequest.getTotalBudget(),
                 itineraryRequest.getNumberOfTravelers(),
                 itineraryRequest.getStartDate(), itineraryRequest.getEndDate());
-
-        // 3.Get user id
-        final String header = request.getHeader("Authorization");
-        final String token = header.replace("Bearer ", "");
-        String username = jwtTokenUtil.extractUsername(token);
-        Optional<User> user = userRepository.findByUsername(username);
+        // 3.Get user
+        User user = UserUtils.getCurrentUser();
 
         // 4. Create travel preferences from request
         TravelPreferences travelPreferences = new TravelPreferences();
@@ -58,11 +54,12 @@ public class ItineraryService {
                 .totalBudget(itineraryRequest.getTotalBudget())
                 .status(ItineraryStatus.DRAFT)
                 .budgetAllocation(budget)
-                .user(user.get())
+                .user(user)
                 .travelPreferences(travelPreferences)
                 .lat(itineraryRequest.getLocation().getLat())
                 .lng(itineraryRequest.getLocation().getLng())
                 .build();
+        budget.setItinerary(itinerary);
         return itineraryRepository.save(itinerary);
     }
 
@@ -86,18 +83,26 @@ public class ItineraryService {
 
     private BudgetAllocation allocateBudget(double totalBudget, int numberOfTravelers, LocalDate startDate,
             LocalDate endDate) {
-        // Example: Simple budget allocation logic
-
+        BudgetAllocation budget = new BudgetAllocation();
+        budget.setTotalBudget(totalBudget);
+        // Calculate trip duration
         long tripDuration = ChronoUnit.DAYS.between(startDate, endDate);
 
-        // Example: Dynamic budget allocation logic
+        // Calculate daily budget per person
         double dailyBudgetPerPerson = totalBudget / (tripDuration * numberOfTravelers);
 
-        BudgetAllocation budget = new BudgetAllocation();
+        // Update budget allocation fields
         budget.setAccommodation(dailyBudgetPerPerson * 0.4 * tripDuration * numberOfTravelers);
-        budget.setMeals(dailyBudgetPerPerson * 0.3 * tripDuration * numberOfTravelers);
+        budget.setFood(dailyBudgetPerPerson * 0.3 * tripDuration * numberOfTravelers);
         budget.setActivities(dailyBudgetPerPerson * 0.2 * tripDuration * numberOfTravelers);
         budget.setTransportation(dailyBudgetPerPerson * 0.1 * tripDuration * numberOfTravelers);
+
+        // Optionally, set other fields like shopping, entertainment, etc., if
+        // applicable
+        budget.setShopping(0); // Example: Set to 0 or calculate dynamically
+        budget.setEntertainment(0); // Example: Set to 0 or calculate dynamically
+        budget.setOther(0); // Example: Set to 0 or calculate dynamically
+
         return budget;
     }
 

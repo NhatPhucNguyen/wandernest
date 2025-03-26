@@ -29,9 +29,8 @@ public class ItineraryController {
     private final ItineraryService itineraryService;
 
     @PostMapping("/generate")
-    public ResponseEntity<?> generateItinerary(HttpServletRequest request,
-            @RequestBody ItineraryRequestDTO requestDTO) {
-        Itinerary itinerary = itineraryService.generateItinerary(request, requestDTO);
+    public ResponseEntity<?> generateItinerary(@RequestBody ItineraryRequestDTO requestDTO) {
+        Itinerary itinerary = itineraryService.generateItinerary(requestDTO);
         ItineraryResponseDTO itineraryResponseDTO = new ItineraryResponseDTO(itinerary);
         return ResponseEntity.status(201).body(itineraryResponseDTO);
     }

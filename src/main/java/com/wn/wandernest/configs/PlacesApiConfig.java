@@ -12,7 +12,6 @@ public class PlacesApiConfig {
     private String baseUrl;
     @Value("${google.key}")
     private String apiKey;
-    //TODO: Implement google photo
     @Value("${google.accessToken}")
     private String accessKey;
     private int maxRetries = 1;

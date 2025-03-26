@@ -80,7 +80,7 @@ public class ItineraryControllerTest {
             .travelPreferences(travelPreferences)
             .build();
 
-        when(itineraryService.generateItinerary(any(),any(ItineraryRequestDTO.class))).thenReturn(itinerary);
+        when(itineraryService.generateItinerary(any(ItineraryRequestDTO.class))).thenReturn(itinerary);
 
         ItineraryRequestDTO requestDTO = new ItineraryRequestDTO();
         requestDTO.setDestination("Paris");

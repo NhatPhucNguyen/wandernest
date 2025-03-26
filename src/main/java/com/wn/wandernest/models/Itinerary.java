@@ -63,6 +63,6 @@ public class Itinerary {
     private List<Restaurant> restaurants;
     
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "budget_allocation_id", referencedColumnName = "id")
+    @JoinColumn(name = "budget_allocation_id")
     private BudgetAllocation budgetAllocation;
 }
