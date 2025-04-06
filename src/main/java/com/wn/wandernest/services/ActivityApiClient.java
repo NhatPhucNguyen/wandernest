@@ -1,14 +1,9 @@
 package com.wn.wandernest.services;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import com.wn.wandernest.configs.PlacesApiConfig;
 import com.wn.wandernest.dtos.ActivityDTO;
 import com.wn.wandernest.dtos.Location;
 import com.wn.wandernest.dtos.PlacesResponse;
@@ -16,6 +11,7 @@ import com.wn.wandernest.models.Activity;
 import com.wn.wandernest.models.Itinerary;
 import com.wn.wandernest.repositories.ActivityRepository;
 import com.wn.wandernest.repositories.ItineraryRepository;
+import com.wn.wandernest.utils.PlacesUtil;
 import com.wn.wandernest.utils.UserUtils;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -24,11 +20,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ActivityApiClient {
-    private final RestTemplate restTemplate;
-    private final PlacesApiConfig config;
     private final ItineraryRepository itineraryRepository;
     private final ActivityRepository activityRepository;
     private final PhotoGen photoGen;
+    private final PlacesUtil placesUtil;
     public List<ActivityDTO> fetchActivities(Long itineraryId) {
         Itinerary itinerary = itineraryRepository.findById(itineraryId)
                 .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
@@ -37,16 +32,14 @@ public class ActivityApiClient {
         if (!itinerary.getUser().getId().equals(currentUserId)) {
             throw new IllegalArgumentException("User ID does not match the itinerary owner");
         }
-        // get location from itinerary
+        // Create Location object from itinerary coordinates
         Location location = new Location(itinerary.getLat(), itinerary.getLng());
-        String url = String.format("%s/activities?location=%s&key=%s",
-                config.getBaseUrl(),
-                URLEncoder.encode(location.toString(), StandardCharsets.UTF_8),
-                config.getApiKey());
-
-        // Call API
-        ResponseEntity<PlacesResponse> response = restTemplate.postForEntity(url, null, PlacesResponse.class);
-        PlacesResponse responseBody = response.getBody();
+        // Use PlacesUtil to make the API call
+        PlacesResponse responseBody = placesUtil.makeGooglePlacesRequest(
+                location,
+                List.of("tourist_attraction"),
+                10,
+                10000.0);
         if (responseBody == null || responseBody.getPlaces() == null) {
             return List.of();
         }

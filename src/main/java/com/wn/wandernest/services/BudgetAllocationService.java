@@ -45,7 +45,15 @@ public class BudgetAllocationService {
             throw new IllegalArgumentException("User ID does not match the itinerary owner");
         }
         BudgetAllocation existingBudgetAllocation = itinerary.getBudgetAllocation();
-
+        if (budgetAllocation.getTotalBudget() < budgetAllocation.getAccommodation() +
+                budgetAllocation.getTransportation() +
+                budgetAllocation.getFood() +
+                budgetAllocation.getActivities() +
+                budgetAllocation.getEntertainment() +
+                budgetAllocation.getShopping() +
+                budgetAllocation.getOther()) {
+            throw new IllegalArgumentException("Allocated budget exceeds the total budget");
+        }
         existingBudgetAllocation.setAccommodation(budgetAllocation.getAccommodation());
         existingBudgetAllocation.setTransportation(budgetAllocation.getTransportation());
         existingBudgetAllocation.setFood(budgetAllocation.getFood());
