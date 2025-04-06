@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.wn.wandernest.configs.PlacesApiConfig;
 import com.wn.wandernest.dtos.PhotoResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PhotoGen {
     private final RestTemplate restTemplate;
-
+    private final PlacesApiConfig config;
     public String generatePhotoUri(String photoName) {
         try {
             String url = String.format(
-                    "https://places.googleapis.com/v1/%s/media?key=AIzaSyDW9mfnYU7ILZglp0NNeOv6faS18UZ0HyU&maxHeightPx=800&maxWidthPx=800&skipHttpRedirect=true",
-                    photoName);
+                    "https://places.googleapis.com/v1/%s/media?key=%s&maxHeightPx=800&maxWidthPx=800&skipHttpRedirect=true",
+                    photoName,config.getApiKey());
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "text/plain");
