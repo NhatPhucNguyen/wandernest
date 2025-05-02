@@ -24,6 +24,7 @@ public class RestaurantApiClient {
         private final RestaurantRepository restaurantRepository;
         private final PhotoGen photoGen;
         private final PlacesUtil placesUtil;
+
         public List<RestaurantDTO> fetchRestaurants(Long itineraryId) {
                 Itinerary itinerary = itineraryRepository.findById(itineraryId)
                                 .orElseThrow(() -> new EntityNotFoundException("Itinerary not found"));
@@ -39,7 +40,7 @@ public class RestaurantApiClient {
                                 location,
                                 List.of("restaurant"),
                                 10,
-                                10000.0);
+                                50000.0);
                 if (responseBody == null || responseBody.getPlaces() == null) {
                         return List.of();
                 }
@@ -63,7 +64,9 @@ public class RestaurantApiClient {
                                                         .rating(apiItem.rating)
                                                         .isSaved(isSaved)
                                                         .weekdayDescriptions(
-                                                                        apiItem.getCurrentOpeningHours().weekdayDescriptions)
+                                                                        apiItem.getCurrentOpeningHours() != null
+                                                                                        ? apiItem.getCurrentOpeningHours().weekdayDescriptions
+                                                                                        : null)
                                                         .build();
                                 })
                                 .toList();
