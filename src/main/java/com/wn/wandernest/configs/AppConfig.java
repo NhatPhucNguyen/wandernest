@@ -20,7 +20,7 @@ public class AppConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:3000") // Adjust the allowed origins as needed
+                        .allowedOrigins("*") // Adjust the allowed origins as needed
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true);
