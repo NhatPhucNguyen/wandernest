@@ -20,7 +20,7 @@ public class AppConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins() // Adjust the allowed origins as needed
+                        .allowedOrigins("https://wandernest-drab.vercel.app") // Adjust the allowed origins as needed
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH")
                         .allowedHeaders("*")
                         .allowCredentials(true);
